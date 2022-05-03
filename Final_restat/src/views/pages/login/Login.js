@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   CButton,
   CCard,
@@ -12,11 +12,33 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilLockLocked, cilUser } from "@coreui/icons";
+import { GoogleLogin, GoogleLogout } from "react-google-login";
+
+const clientId = "458739503333-amt59gqddvpbj5ibgcn74mk99m37ub5c.apps.googleusercontent.com";
 
 const Login = () => {
+  const [showloginButton, setShowloginButton] = useState(true);
+  const [showlogoutButton, setShowlogoutButton] = useState(false);
+  const onLoginSuccess = (res) => {
+    console.log("Login Success:", res.profileObj);
+    setShowloginButton(false);
+    setShowlogoutButton(true);
+  }
+
+  const onLoginFailure = (res) => {
+    console.log("Login Failed:", res);
+  }
+
+  const onSignoutSuccess = () => {
+    alert("You have been logged out successfully");
+    console.clear();
+    setShowloginButton(true);
+    setShowlogoutButton(false);
+  }
+
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
@@ -50,6 +72,19 @@ const Login = () => {
                           Login
                         </CButton>
                       </CCol>
+                      
+                      <CCol>
+                      <h4> OR </h4>
+                      {showloginButton ?
+                        <GoogleLogin
+                          clientId={clientId}
+                          buttonText="Sign In"
+                          onSuccess={onLoginSuccess}
+                          onFailure={onLoginFailure}
+                          cookiePolicy={'single_host_origin'}
+                          isSignedIn={true}
+                        /> : null}
+                      </CCol>
                       <CCol xs={6} className="text-right">
                         <CButton color="link" className="px-0">
                           Forgot password?
@@ -79,8 +114,27 @@ const Login = () => {
           </CCol>
         </CRow>
       </CContainer>
-    </div>
-  )
-}
+   
+      {/* {showloginButton ?
+        <GoogleLogin
+          clientId={clientId}
+          buttonText="Sign In"
+          onSuccess={onLoginSuccess}
+          onFailure={onLoginFailure}
+          cookiePolicy={'single_host_origin'}
+          isSignedIn={true}
+        /> : null}
 
-export default Login
+      {showlogoutButton ?
+        <GoogleLogout
+          clientId={clientId}
+          buttonText="Sign Out"
+          onLogoutSuccess={onSignoutSuccess}
+        >
+        </GoogleLogout> : null
+      } */}
+    </div>
+  );
+};
+
+export default Login;
